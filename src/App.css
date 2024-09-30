@@ -234,11 +234,13 @@ select {
 
 .leaderboard-rank {
   font-weight: bold;
+  color: #fff;
   margin: 0;
 }
 
 .leaderboard-stats {
   font-size: 14px;
+  color: #fff;
   margin: 0;
 }
 
@@ -246,6 +248,7 @@ select {
   margin-top: 8px;
   font-size: 14px;
   font-weight: 600;
+  color: #fff;
 }
 
 /* Specific styles for each rank */

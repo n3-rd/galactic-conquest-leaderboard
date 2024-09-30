@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
+import { Player } from '../hooks/usePlayerData';
 
-function EditPointsPopup({ player, onSave, onClose }) {
+interface EditPointsPopupProps {
+  player: Player;
+  onSave: (id: string, points: number) => void;
+  onClose: () => void;
+}
+
+function EditPointsPopup({ player, onSave, onClose }: EditPointsPopupProps) {
   const [points, setPoints] = useState(player.pts);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     onSave(player.id, points);
     onClose();

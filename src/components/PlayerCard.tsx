@@ -1,13 +1,19 @@
 import React from 'react';
+import { Player } from '../hooks/usePlayerData';
 
-function PlayerCard({ player, onEdit, currentRank, arrow }) {
+interface PlayerCardProps {
+  player: Player;
+  onEdit: (player: Player) => void;
+  currentRank: number;
+  arrow: React.ReactNode;
+}
+
+const PlayerCard: React.FC<PlayerCardProps> = ({ player, onEdit, currentRank, arrow }) => {
   return (
     <div className="player-card">
       <div className="rank-info">
         <span className="current-rank">{currentRank}</span>
-        <span className={`rank-change ${arrow === '↑' ? 'up' : arrow === '↓' ? 'down' : 'same'}`}>
-          {arrow}
-        </span>
+        <span className="rank-change">{arrow}</span>
       </div>
       <img src={player.image} alt={player.name} className="player-avatar" />
       <div className="player-info">

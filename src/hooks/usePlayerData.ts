@@ -2,11 +2,18 @@ import { useState, useEffect, useRef } from 'react';
 
 const API_URL = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:5000/api';
 
+export interface Player {
+  id: string;
+  name: string;
+  pts: number;
+  image: string;
+}
+
 function usePlayerData() {
-  const [players, setPlayers] = useState([]);
+  const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const previousRankingsRef = useRef(new Map());
+  const [error, setError] = useState<Error | null>(null);
+  const previousRankingsRef = useRef(new Map<string, number>());
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
@@ -30,7 +37,7 @@ function usePlayerData() {
         }
         setLoading(false);
       } catch (error) {
-        setError(error);
+        setError(error instanceof Error ? error : new Error('An unknown error occurred'));
         setLoading(false);
       }
     };
@@ -38,15 +45,15 @@ function usePlayerData() {
     fetchData();
   }, [isInitialLoad]);
 
-  const initializeRankings = (currentPlayers) => {
-    const newRankings = new Map();
+  const initializeRankings = (currentPlayers: { id: string }[]) => {
+    const newRankings = new Map<string, number>();
     currentPlayers.forEach((player, index) => {
       newRankings.set(player.id, index + 1);
     });
     previousRankingsRef.current = newRankings;
   };
 
-  async function updatePlayer(id, pts) {
+  async function updatePlayer(id: string, pts: number): Promise<void> {
     try {
       const response = await fetch(`${API_URL}/users`, {
         method: 'POST',
@@ -59,12 +66,12 @@ function usePlayerData() {
         throw new Error('Failed to update player data');
       }
       const updatedPlayer = await response.json();
-      setPlayers(prevPlayers => {
+      setPlayers((prevPlayers: Player[]) => {
         const updatedPlayers = prevPlayers.map(p => p.id === id ? updatedPlayer : p);
         return updatedPlayers;
       });
     } catch (err) {
-      setError(err);
+      setError(err instanceof Error ? err : new Error('An unknown error occurred'));
     }
   }
 

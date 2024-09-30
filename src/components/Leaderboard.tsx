@@ -4,16 +4,16 @@ import LeaderboardControls from './LeaderboardControls';
 import EditPointsPopup from './EditPointsPopup';
 import TopUsers from './TopUsers';
 import { ArrowUp, ArrowDown, Minus } from 'lucide-react';
-import usePlayerData from '../hooks/usePlayerData';
+import usePlayerData, { Player } from '../hooks/usePlayerData';
 
 function Leaderboard() {
-  const [sortBy, setSortBy] = useState('pts');
+  const [sortBy, setSortBy] = useState<'pts'>('pts');
   const [displayCount, setDisplayCount] = useState(10);
-  const [activeTab, setActiveTab] = useState('full');
+  const [activeTab, setActiveTab] = useState<'full' | 'top3'>('full');
   
   const { players, loading, error, updatePlayer, previousRankingsRef } = usePlayerData();
   
-  const [editingPlayer, setEditingPlayer] = useState(null);
+  const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
 
   const sortedPlayers = useMemo(() => {
     return [...players].sort((a, b) => b[sortBy] - a[sortBy]);
@@ -26,16 +26,16 @@ function Leaderboard() {
     previousRankingsRef.current = newRankings;
   }, [sortedPlayers, previousRankingsRef]);
 
-  const handleEdit = (player) => {
+  const handleEdit = (player: Player) => {
     setEditingPlayer(player);
   };
 
-  const handleSave = async (id, newPoints) => {
+  const handleSave = async (id: string, newPoints: number) => {
     await updatePlayer(id, newPoints);
     setEditingPlayer(null);
   };
 
-  const getArrow = (player, currentRank) => {
+  const getArrow = (player: Player, currentRank: number): React.ReactNode => {
     const previousRank = previousRankingsRef.current.get(player.id);
     if (previousRank === undefined) return null;
     if (currentRank < previousRank) {
@@ -73,7 +73,7 @@ function Leaderboard() {
         <>
           <LeaderboardControls
             sortBy={sortBy}
-            onSortChange={setSortBy}
+            onSortChange={(value: 'pts') => setSortBy(value)}
             displayCount={displayCount}
             onDisplayCountChange={setDisplayCount}
           />
@@ -88,10 +88,13 @@ function Leaderboard() {
           ))}
         </>
       ) : (
-        <TopUsers players={sortedPlayers} count={3} />
+        <TopUsers players={sortedPlayers.map(player => ({
+          ...player,
+          prize: 0 // Adding a default prize value
+        }))} />
       )}
 
-      {/* Popup for editing kill count */}
+      {/* Popup for editing points */}
       {editingPlayer && (
         <EditPointsPopup
           player={editingPlayer}

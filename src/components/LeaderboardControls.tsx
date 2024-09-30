@@ -1,6 +1,13 @@
 import React from 'react';
 
-function LeaderboardControls({ sortBy, onSortChange, displayCount, onDisplayCountChange }) {
+interface LeaderboardControlsProps {
+  sortBy: 'pts';
+  onSortChange: (value: 'pts') => void;
+  displayCount: number;
+  onDisplayCountChange: (value: number) => void;
+}
+
+function LeaderboardControls({ sortBy, onSortChange, displayCount, onDisplayCountChange }: LeaderboardControlsProps) {
   return (
     <div className="leaderboard-controls">
       <div>
@@ -8,7 +15,7 @@ function LeaderboardControls({ sortBy, onSortChange, displayCount, onDisplayCoun
         <select
           id="sort-by"
           value={sortBy}
-          onChange={(e) => onSortChange(e.target.value)}
+          onChange={(e) => onSortChange(e.target.value as 'pts')}
         >
           <option value="pts">Points</option>
         </select>

@@ -1,13 +1,26 @@
-const express = require('express');
-const cors = require('cors');
+import cors from 'cors';
+import path from 'path';
+import express, { Request, Response } from 'express';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const app = express();
-const path = require('path');
 
 app.use(cors());
 app.use(express.json());
 
+interface Player {
+  id: number;
+  name: string;
+  pts: number;
+  image: string;
+}
+
 // Initial player data
-const initialPlayers = [
+const initialPlayers: Player[] = [
   {
     "id": 1,
     "name": "James Wilson",
@@ -191,20 +204,20 @@ const initialPlayers = [
 ]
 
 // Function to reset players
-function resetPlayers() {
+function resetPlayers(): Player[] {
   return JSON.parse(JSON.stringify(initialPlayers));
 }
 
 // Initialize players
-let players = resetPlayers();
+let players: Player[] = resetPlayers();
 
 // GET /api/users - Fetch all player data
-app.get('/api/users', (req, res) => {
+app.get('/api/users', (_req: Request, res: Response) => {
   res.json(players);
 });
 
 // POST /api/users - Update a player's stats
-app.post('/api/users', (req, res) => {
+app.post('/api/users', (req: Request, res: Response) => {
   const { id, pts } = req.body;
   const playerIndex = players.findIndex(p => p.id === id);
   
@@ -217,7 +230,7 @@ app.post('/api/users', (req, res) => {
 });
 
 // New route to reset all player data
-app.post('/api/reset', (req, res) => {
+app.post('/api/reset', (_req: Request, res: Response) => {
   players = resetPlayers();
   res.json({ message: "Player data reset successfully" });
 });
@@ -226,7 +239,7 @@ app.post('/api/reset', (req, res) => {
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../build')));
 
-  app.get('*', (req, res) => {
+  app.get('*', (_req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, '../build', 'index.html'));
   });
 }
