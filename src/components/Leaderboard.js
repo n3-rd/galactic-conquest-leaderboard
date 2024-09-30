@@ -3,6 +3,7 @@ import PlayerCard from './PlayerCard';
 import LeaderboardControls from './LeaderboardControls';
 import EditKillCountPopup from './EditKillCountPopup';
 import Top3Leaderboard from './Top3Leaderboard';
+import { ArrowUp, ArrowDown, Minus } from 'lucide-react';
 import usePlayerData from '../hooks/usePlayerData';
 
 function Leaderboard() {
@@ -38,11 +39,11 @@ function Leaderboard() {
     const previousRank = previousRankingsRef.current.get(player.id);
     if (previousRank === undefined) return null;
     if (currentRank < previousRank) {
-      return '↑';
+      return <ArrowUp color='green' />;
     } else if (currentRank > previousRank) {
-      return '↓';
+      return <ArrowDown color='red' />;
     } else {
-      return '-';
+      return <Minus color='gray' />;
     }
   };
 
