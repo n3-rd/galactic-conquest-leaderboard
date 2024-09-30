@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import PlayerCard from './PlayerCard';
 import LeaderboardControls from './LeaderboardControls';
 import EditKillCountPopup from './EditKillCountPopup';
@@ -10,7 +10,7 @@ function Leaderboard() {
   const [displayCount, setDisplayCount] = useState(10);
   const [activeTab, setActiveTab] = useState('full');
   
-  const { players, loading, error, updatePlayer, previousRankingsRef, showArrows } = usePlayerData();
+  const { players, loading, error, updatePlayer, previousRankingsRef } = usePlayerData();
   
   const [editingPlayer, setEditingPlayer] = useState(null);
 
@@ -19,6 +19,11 @@ function Leaderboard() {
   }, [players, sortBy]);
 
   const displayedPlayers = sortedPlayers.slice(0, displayCount);
+
+  useEffect(() => {
+    const newRankings = new Map(sortedPlayers.map((player, index) => [player.id, index + 1]));
+    previousRankingsRef.current = newRankings;
+  }, [sortedPlayers]);
 
   const handleEdit = (player) => {
     setEditingPlayer(player);
@@ -30,8 +35,8 @@ function Leaderboard() {
   };
 
   const getArrow = (player, currentRank) => {
-    if (!showArrows) return null;
-    const previousRank = previousRankingsRef.current.get(player.id) || currentRank;
+    const previousRank = previousRankingsRef.current.get(player.id);
+    if (previousRank === undefined) return null;
     if (currentRank < previousRank) {
       return '↑';
     } else if (currentRank > previousRank) {

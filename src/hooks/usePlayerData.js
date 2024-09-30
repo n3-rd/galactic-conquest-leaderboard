@@ -8,7 +8,6 @@ function usePlayerData() {
   const [error, setError] = useState(null);
   const previousRankingsRef = useRef(new Map());
   const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [showArrows, setShowArrows] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,9 +27,6 @@ function usePlayerData() {
         if (isInitialLoad) {
           initializeRankings(data);
           setIsInitialLoad(false);
-          setShowArrows(false);
-        } else {
-          updatePreviousRankings(data);
         }
         setLoading(false);
       } catch (error) {
@@ -50,19 +46,6 @@ function usePlayerData() {
     previousRankingsRef.current = newRankings;
   };
 
-  const updatePreviousRankings = (currentPlayers) => {
-    const newRankings = new Map();
-    currentPlayers.forEach((player, index) => {
-      const previousRank = previousRankingsRef.current.get(player.id);
-      if (previousRank === undefined) {
-        newRankings.set(player.id, index + 1);
-      } else {
-        newRankings.set(player.id, previousRank);
-      }
-    });
-    previousRankingsRef.current = newRankings;
-  };
-
   async function updatePlayer(id, kill_count) {
     try {
       const response = await fetch(`${API_URL}/users`, {
@@ -76,16 +59,16 @@ function usePlayerData() {
         throw new Error('Failed to update player data');
       }
       const updatedPlayer = await response.json();
-      const updatedPlayers = players.map(p => p.id === id ? updatedPlayer : p);
-      setPlayers(updatedPlayers);
-      updatePreviousRankings(updatedPlayers);
-      setShowArrows(true);
+      setPlayers(prevPlayers => {
+        const updatedPlayers = prevPlayers.map(p => p.id === id ? updatedPlayer : p);
+        return updatedPlayers;
+      });
     } catch (err) {
       setError(err);
     }
   }
 
-  return { players, loading, error, updatePlayer, previousRankingsRef, showArrows };
+  return { players, loading, error, updatePlayer, previousRankingsRef };
 }
 
 export default usePlayerData;
