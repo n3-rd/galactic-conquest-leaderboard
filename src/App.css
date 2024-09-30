@@ -201,41 +201,86 @@ select {
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  gap: 1rem;
-  padding: 1rem;
+  gap: 16px;
+  padding: 16px;
 }
 
 .leaderboard-item {
   display: flex;
   flex-direction: column;
   align-items: center;
+  color: #333;
 }
 
-.leaderboard-item img {
+.leaderboard-avatar {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  margin-bottom: 0.5rem;
+  background-color: #d1d5db;
+  margin-bottom: 8px;
 }
 
 .leaderboard-item-content {
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
-  padding: 0.5rem;
-  border-top-left-radius: 1rem;
-  border-top-right-radius: 1rem;
+  padding: 8px;
+  background-color: rgba(255, 255, 255, 0.39);
+  text-align: center;
 }
 
-.leaderboard-item-content p {
+.leaderboard-rank {
+  font-weight: bold;
   margin: 0;
 }
 
-.leaderboard-item-name {
-  margin-top: 0.5rem;
-  font-size: 0.875rem;
+.leaderboard-stats {
+  font-size: 14px;
+  margin: 0;
+}
+
+.leaderboard-name {
+  margin-top: 8px;
+  font-size: 14px;
   font-weight: 600;
+}
+
+/* Specific styles for each rank */
+.leaderboard-item.rank-1 {
+  order: 2;
+}
+
+.leaderboard-item.rank-1 .leaderboard-item-content {
+  height: 192px;
+  background-color: rgba(254, 243, 199, 0.39);
+}
+
+.leaderboard-item.rank-2 {
+  order: 1;
+}
+
+.leaderboard-item.rank-2 .leaderboard-item-content {
+  height: 160px;
+  background-color: rgba(243, 244, 246, 0.39);
+}
+
+.leaderboard-item.rank-3 {
+  order: 3;
+}
+
+.leaderboard-item.rank-3 .leaderboard-item-content {
+  height: 144px;
+  background-color: rgba(254, 215, 170, 0.39);
+}
+
+/* Remove specific rank styles as they're no longer needed */
+.leaderboard-item.rank-1,
+.leaderboard-item.rank-2,
+.leaderboard-item.rank-3 {
+  order: unset;
 }
 
 /* ... rest of the existing styles ... */

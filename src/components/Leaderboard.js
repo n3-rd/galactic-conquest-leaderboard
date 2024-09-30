@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import PlayerCard from './PlayerCard';
 import LeaderboardControls from './LeaderboardControls';
 import EditPointsPopup from './EditPointsPopup';
-import Top3Leaderboard from './Top3Leaderboard';
+import TopUsers from './TopUsers';
 import { ArrowUp, ArrowDown, Minus } from 'lucide-react';
 import usePlayerData from '../hooks/usePlayerData';
 
@@ -88,7 +88,7 @@ function Leaderboard() {
           ))}
         </>
       ) : (
-        <Top3Leaderboard players={sortedPlayers.slice(0, 3)} />
+        <TopUsers players={sortedPlayers} count={3} />
       )}
 
       {/* Popup for editing kill count */}
