@@ -6,8 +6,8 @@ const path = require('path');
 app.use(cors());
 app.use(express.json());
 
-// Updated mock player data
-let players = [
+// Initial player data
+const initialPlayers = [
   {
     "id": 1,
     "name": "Alice Johnson",
@@ -188,7 +188,15 @@ let players = [
     "kill_count": 5,
     "image": "https://randomuser.me/api/portraits/men/30.jpg"
   }
-];
+]
+
+// Function to reset players
+function resetPlayers() {
+  return JSON.parse(JSON.stringify(initialPlayers));
+}
+
+// Initialize players
+let players = resetPlayers();
 
 // GET /api/users - Fetch all player data
 app.get('/api/users', (req, res) => {
@@ -206,6 +214,12 @@ app.post('/api/users', (req, res) => {
   } else {
     res.status(404).json({ error: "Player not found" });
   }
+});
+
+// New route to reset all player data
+app.post('/api/reset', (req, res) => {
+  players = resetPlayers();
+  res.json({ message: "Player data reset successfully" });
 });
 
 // Serve static files from the React app in production

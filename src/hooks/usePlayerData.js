@@ -1,23 +1,37 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
-const API_URL = process.env.NODE_ENV === 'production' ? '/api/users' : 'http://localhost:5000/api/users';
+const API_URL = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:5000/api';
 
 function usePlayerData() {
   const [players, setPlayers] = useState([]);
-  const [previousRankings, setPreviousRankings] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const previousRankingsRef = useRef(new Map());
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [showArrows, setShowArrows] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(API_URL);
+        if (isInitialLoad) {
+          console.log('Resetting player data');
+          await fetch(`${API_URL}/reset`, { method: 'POST' });
+        }
+
+        const response = await fetch(`${API_URL}/users`);
         if (!response.ok) {
           throw new Error('Failed to fetch player data');
         }
         const data = await response.json();
         setPlayers(data);
-        updateRankings(data);
+        
+        if (isInitialLoad) {
+          initializeRankings(data);
+          setIsInitialLoad(false);
+          setShowArrows(false);
+        } else {
+          updatePreviousRankings(data);
+        }
         setLoading(false);
       } catch (error) {
         setError(error);
@@ -26,19 +40,32 @@ function usePlayerData() {
     };
 
     fetchData();
-  }, []);
+  }, [isInitialLoad]);
 
-  function updateRankings(currentPlayers) {
-    const newRankings = {};
+  const initializeRankings = (currentPlayers) => {
+    const newRankings = new Map();
     currentPlayers.forEach((player, index) => {
-      newRankings[player.id] = index + 1;
+      newRankings.set(player.id, index + 1);
     });
-    setPreviousRankings(newRankings);
-  }
+    previousRankingsRef.current = newRankings;
+  };
+
+  const updatePreviousRankings = (currentPlayers) => {
+    const newRankings = new Map();
+    currentPlayers.forEach((player, index) => {
+      const previousRank = previousRankingsRef.current.get(player.id);
+      if (previousRank === undefined) {
+        newRankings.set(player.id, index + 1);
+      } else {
+        newRankings.set(player.id, previousRank);
+      }
+    });
+    previousRankingsRef.current = newRankings;
+  };
 
   async function updatePlayer(id, kill_count) {
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(`${API_URL}/users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -51,13 +78,14 @@ function usePlayerData() {
       const updatedPlayer = await response.json();
       const updatedPlayers = players.map(p => p.id === id ? updatedPlayer : p);
       setPlayers(updatedPlayers);
-      updateRankings(updatedPlayers);
+      updatePreviousRankings(updatedPlayers);
+      setShowArrows(true);
     } catch (err) {
       setError(err);
     }
   }
 
-  return { players, previousRankings, loading, error, updatePlayer };
+  return { players, loading, error, updatePlayer, previousRankingsRef, showArrows };
 }
 
 export default usePlayerData;

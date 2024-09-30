@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import PlayerCard from './PlayerCard';
 import LeaderboardControls from './LeaderboardControls';
 import EditKillCountPopup from './EditKillCountPopup';
@@ -6,33 +6,41 @@ import Top3Leaderboard from './Top3Leaderboard';
 import usePlayerData from '../hooks/usePlayerData';
 
 function Leaderboard() {
-  // State management for sorting, display count, and active tab
   const [sortBy, setSortBy] = useState('kill_count');
   const [displayCount, setDisplayCount] = useState(10);
-  const [activeTab, setActiveTab] = useState('full'); // 'full' or 'top3'
+  const [activeTab, setActiveTab] = useState('full');
   
-  // Custom hook to fetch and manage player data
-  const { players, previousRankings, loading, error, updatePlayer } = usePlayerData();
+  const { players, loading, error, updatePlayer, previousRankingsRef, showArrows } = usePlayerData();
   
-  // State for managing the player being edited
   const [editingPlayer, setEditingPlayer] = useState(null);
 
-  // Sort players and slice based on display count
-  const sortedPlayers = [...players].sort((a, b) => b[sortBy] - a[sortBy]);
+  const sortedPlayers = useMemo(() => {
+    return [...players].sort((a, b) => b[sortBy] - a[sortBy]);
+  }, [players, sortBy]);
+
   const displayedPlayers = sortedPlayers.slice(0, displayCount);
 
-  // Handler for initiating player edit
   const handleEdit = (player) => {
     setEditingPlayer(player);
   };
 
-  // Handler for saving updated kill count
   const handleSave = async (id, newKillCount) => {
     await updatePlayer(id, newKillCount);
     setEditingPlayer(null);
   };
 
-  // Loading and error states
+  const getArrow = (player, currentRank) => {
+    if (!showArrows) return null;
+    const previousRank = previousRankingsRef.current.get(player.id) || currentRank;
+    if (currentRank < previousRank) {
+      return '↑';
+    } else if (currentRank > previousRank) {
+      return '↓';
+    } else {
+      return '-';
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
@@ -69,12 +77,12 @@ function Leaderboard() {
               player={player} 
               onEdit={handleEdit} 
               currentRank={index + 1}
-              previousRank={previousRankings[player.id]}
+              arrow={getArrow(player, index + 1)}
             />
           ))}
         </>
       ) : (
-        <Top3Leaderboard players={sortedPlayers} />
+        <Top3Leaderboard players={sortedPlayers.slice(0, 3)} />
       )}
 
       {/* Popup for editing kill count */}
