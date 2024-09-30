@@ -23,7 +23,7 @@ function Leaderboard() {
   useEffect(() => {
     const newRankings = new Map(sortedPlayers.map((player, index) => [player.id, index + 1]));
     previousRankingsRef.current = newRankings;
-  }, [sortedPlayers]);
+  }, [sortedPlayers, previousRankingsRef]);
 
   const handleEdit = (player) => {
     setEditingPlayer(player);
