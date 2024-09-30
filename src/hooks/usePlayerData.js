@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 
+const API_URL = process.env.NODE_ENV === 'production' ? '/api/users' : 'http://localhost:5000/api/users';
+
 function usePlayerData() {
   const [players, setPlayers] = useState([]);
   const [previousRankings, setPreviousRankings] = useState({});
@@ -7,24 +9,24 @@ function usePlayerData() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchPlayers();
-  }, []);
-
-  async function fetchPlayers() {
-    try {
-      const response = await fetch('http://localhost:5000/api/users');
-      if (!response.ok) {
-        throw new Error('Failed to fetch player data');
+    const fetchData = async () => {
+      try {
+        const response = await fetch(API_URL);
+        if (!response.ok) {
+          throw new Error('Failed to fetch player data');
+        }
+        const data = await response.json();
+        setPlayers(data);
+        updateRankings(data);
+        setLoading(false);
+      } catch (error) {
+        setError(error);
+        setLoading(false);
       }
-      const data = await response.json();
-      setPlayers(data);
-      updateRankings(data);
-      setLoading(false);
-    } catch (err) {
-      setError(err);
-      setLoading(false);
-    }
-  }
+    };
+
+    fetchData();
+  }, []);
 
   function updateRankings(currentPlayers) {
     const newRankings = {};
@@ -36,7 +38,7 @@ function usePlayerData() {
 
   async function updatePlayer(id, kill_count) {
     try {
-      const response = await fetch('http://localhost:5000/api/users', {
+      const response = await fetch(API_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

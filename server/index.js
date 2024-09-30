@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const path = require('path');
+const usersRouter = require('../api/users');
 
 app.use(cors());
 app.use(express.json());
@@ -58,6 +60,18 @@ app.post('/api/users', (req, res) => {
   }
 });
 
+// Serve static files from the React app in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../build')));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../build', 'index.html'));
+  });
+}
+
 const PORT = process.env.PORT || 5000;
+
+// Add this line to use the users router
+app.use('/api/users', usersRouter);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
