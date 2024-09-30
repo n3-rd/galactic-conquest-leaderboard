@@ -1,25 +1,25 @@
 import React, { useState } from 'react';
 
-function EditKillCountPopup({ player, onSave, onClose }) {
-  const [killCount, setKillCount] = useState(player.kill_count);
+function EditPointsPopup({ player, onSave, onClose }) {
+  const [points, setPoints] = useState(player.pts);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(player.id, killCount);
+    onSave(player.id, points);
     onClose();
   };
 
   return (
     <div className="popup-overlay">
       <div className="popup">
-        <h2>Edit Kill Count for {player.name}</h2>
+        <h2>Edit Points for {player.name}</h2>
         <form onSubmit={handleSubmit}>
-          <label htmlFor="kill-count">Kill Count:</label>
+          <label htmlFor="points">Points:</label>
           <input
             type="number"
-            id="kill-count"
-            value={killCount}
-            onChange={(e) => setKillCount(Number(e.target.value))}
+            id="points"
+            value={points}
+            onChange={(e) => setPoints(Number(e.target.value))}
             min="0"
           />
           <div className="popup-buttons">
@@ -32,4 +32,4 @@ function EditKillCountPopup({ player, onSave, onClose }) {
   );
 }
 
-export default EditKillCountPopup;
+export default EditPointsPopup;

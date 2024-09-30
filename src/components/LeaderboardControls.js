@@ -10,7 +10,7 @@ function LeaderboardControls({ sortBy, onSortChange, displayCount, onDisplayCoun
           value={sortBy}
           onChange={(e) => onSortChange(e.target.value)}
         >
-          <option value="kill_count">Kill Count</option>
+          <option value="pts">Points</option>
         </select>
       </div>
       <div>

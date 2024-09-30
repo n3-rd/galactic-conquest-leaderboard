@@ -46,14 +46,14 @@ function usePlayerData() {
     previousRankingsRef.current = newRankings;
   };
 
-  async function updatePlayer(id, kill_count) {
+  async function updatePlayer(id, pts) {
     try {
       const response = await fetch(`${API_URL}/users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ id, kill_count }),
+        body: JSON.stringify({ id, pts }),
       });
       if (!response.ok) {
         throw new Error('Failed to update player data');

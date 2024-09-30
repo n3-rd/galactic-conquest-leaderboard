@@ -1,13 +1,13 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import PlayerCard from './PlayerCard';
 import LeaderboardControls from './LeaderboardControls';
-import EditKillCountPopup from './EditKillCountPopup';
+import EditPointsPopup from './EditPointsPopup';
 import Top3Leaderboard from './Top3Leaderboard';
 import { ArrowUp, ArrowDown, Minus } from 'lucide-react';
 import usePlayerData from '../hooks/usePlayerData';
 
 function Leaderboard() {
-  const [sortBy, setSortBy] = useState('kill_count');
+  const [sortBy, setSortBy] = useState('pts');
   const [displayCount, setDisplayCount] = useState(10);
   const [activeTab, setActiveTab] = useState('full');
   
@@ -30,8 +30,8 @@ function Leaderboard() {
     setEditingPlayer(player);
   };
 
-  const handleSave = async (id, newKillCount) => {
-    await updatePlayer(id, newKillCount);
+  const handleSave = async (id, newPoints) => {
+    await updatePlayer(id, newPoints);
     setEditingPlayer(null);
   };
 
@@ -93,7 +93,7 @@ function Leaderboard() {
 
       {/* Popup for editing kill count */}
       {editingPlayer && (
-        <EditKillCountPopup
+        <EditPointsPopup
           player={editingPlayer}
           onSave={handleSave}
           onClose={() => setEditingPlayer(null)}

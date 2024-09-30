@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Individual leaderboard item component
-const LeaderboardItem = ({ rank, name, kill_count, image }) => {
+const LeaderboardItem = ({ rank, name, pts, image }) => {
   // Dynamic styling based on rank
   const height = rank === 1 ? 'h-48' : rank === 2 ? 'h-40' : 'h-36';
   const color = rank === 1 ? 'bg-yellow-400' : rank === 2 ? 'bg-gray-300' : 'bg-orange-300';
@@ -11,7 +11,7 @@ const LeaderboardItem = ({ rank, name, kill_count, image }) => {
       <img src={image} alt={name} className="w-16 h-16 rounded-full mb-2" />
       <div className={`${height} ${color} rounded-t-2xl flex flex-col justify-end items-center p-2`}>
         <p className="font-bold">{rank === 1 ? '1st' : rank === 2 ? '2nd' : '3rd'}</p>
-        <p>{kill_count} Kills</p>
+        <p>{pts} Points</p>
       </div>
       <p className="mt-2 text-sm font-semibold">{name}</p>
     </div>
@@ -30,7 +30,7 @@ const Top3Leaderboard = ({ players }) => {
           key={player.id}
           rank={index + 1}
           name={player.name}
-          kill_count={player.kill_count}
+          pts={player.pts}
           image={player.image}
         />
       ))}

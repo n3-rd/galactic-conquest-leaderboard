@@ -12,8 +12,8 @@ function PlayerCard({ player, onEdit, currentRank, arrow }) {
       <img src={player.image} alt={player.name} className="player-avatar" />
       <div className="player-info">
         <h2>{player.name}</h2>
-        <p>Kill Count: {player.kill_count}</p>
-        <button onClick={() => onEdit(player)}>Edit Kill Count</button>
+        <p>PTS: {player.pts}</p>
+        <button onClick={() => onEdit(player)}>Edit Points</button>
       </div>
     </div>
   );
