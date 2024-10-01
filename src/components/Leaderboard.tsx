@@ -1,25 +1,18 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import PlayerCard from './PlayerCard';
-import LeaderboardControls from './LeaderboardControls';
 import EditPointsPopup from './EditPointsPopup';
 import TopUsers from './TopUsers';
 import { ArrowUp, ArrowDown, Minus } from 'lucide-react';
 import usePlayerData, { Player } from '../hooks/usePlayerData';
 
 function Leaderboard() {
-  const [sortBy, setSortBy] = useState<'pts'>('pts');
-  const [displayCount, setDisplayCount] = useState(10);
-  const [activeTab, setActiveTab] = useState<'full' | 'top3'>('full');
-  
   const { players, loading, error, updatePlayer, previousRankingsRef } = usePlayerData();
   
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
 
   const sortedPlayers = useMemo(() => {
-    return [...players].sort((a, b) => b[sortBy] - a[sortBy]);
-  }, [players, sortBy]);
-
-  const displayedPlayers = sortedPlayers.slice(0, displayCount);
+    return [...players].sort((a, b) => b.pts - a.pts);
+  }, [players]);
 
   useEffect(() => {
     const newRankings = new Map(sortedPlayers.map((player, index) => [player.id, index + 1]));
@@ -52,47 +45,23 @@ function Leaderboard() {
 
   return (
     <div className="leaderboard">
-      {/* Tab navigation */}
-      <div className="tab-buttons">
-        <button
-          className={`tab-button ${activeTab === 'full' ? 'active' : ''}`}
-          onClick={() => setActiveTab('full')}
-        >
-          Full Leaderboard
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'top3' ? 'active' : ''}`}
-          onClick={() => setActiveTab('top3')}
-        >
-          Top 3
-        </button>
-      </div>
+      {/* Top 3 Users */}
+      <TopUsers players={sortedPlayers.slice(0, 3).map(player => ({
+        ...player,
+        prize: 0 // Adding a default prize value
+      }))} />
 
-      {/* Conditional rendering based on active tab */}
-      {activeTab === 'full' ? (
-        <>
-          <LeaderboardControls
-            sortBy={sortBy}
-            onSortChange={(value: 'pts') => setSortBy(value)}
-            displayCount={displayCount}
-            onDisplayCountChange={setDisplayCount}
-          />
-          {displayedPlayers.map((player, index) => (
-            <PlayerCard 
-              key={player.id} 
-              player={player} 
-              onEdit={handleEdit} 
-              currentRank={index + 1}
-              arrow={getArrow(player, index + 1)}
-            />
-          ))}
-        </>
-      ) : (
-        <TopUsers players={sortedPlayers.map(player => ({
-          ...player,
-          prize: 0 // Adding a default prize value
-        }))} />
-      )}
+      {/* Full Leaderboard */}
+      <h2>Full Leaderboard</h2>
+      {sortedPlayers.map((player, index) => (
+        <PlayerCard 
+          key={player.id} 
+          player={player} 
+          onEdit={handleEdit} 
+          currentRank={index + 1}
+          arrow={getArrow(player, index + 1)}
+        />
+      ))}
 
       {/* Popup for editing points */}
       {editingPlayer && (
