@@ -2,7 +2,6 @@ import React, { useState, useMemo, useEffect } from 'react';
 import PlayerCard from './PlayerCard';
 import EditPointsPopup from './EditPointsPopup';
 import TopUsers from './TopUsers';
-import { ArrowUp, ArrowDown, Minus } from 'lucide-react';
 import usePlayerData, { Player } from '../hooks/usePlayerData';
 
 function Leaderboard() {
@@ -32,11 +31,11 @@ function Leaderboard() {
     const previousRank = previousRankingsRef.current.get(player.id);
     if (previousRank === undefined) return null;
     if (currentRank < previousRank) {
-      return <ArrowUp color='green' />;
+      return <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 256 256"><path fill="#17fb13" d="M208.49 120.49a12 12 0 0 1-17 0L140 69v147a12 12 0 0 1-24 0V69l-51.51 51.49a12 12 0 0 1-17-17l72-72a12 12 0 0 1 17 0l72 72a12 12 0 0 1 0 17"/></svg>;
     } else if (currentRank > previousRank) {
-      return <ArrowDown color='red' />;
+      return <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 256 256"><path fill="#fb1313" d="m208.49 152.49l-72 72a12 12 0 0 1-17 0l-72-72a12 12 0 0 1 17-17L116 187V40a12 12 0 0 1 24 0v147l51.51-51.52a12 12 0 0 1 17 17Z"/></svg>;
     } else {
-      return <Minus color='gray' />;
+      return<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 256 256"><path fill="#d6d6d6" d="M228 128a12 12 0 0 1-12 12H40a12 12 0 0 1 0-24h176a12 12 0 0 1 12 12"/></svg>;
     }
   };
 
